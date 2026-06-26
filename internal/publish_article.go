@@ -141,11 +141,13 @@ func detectDiff(imageDir string, caches map[string]entity.ImageCache) ([]ImageDi
 		if prev, ok := caches[path]; !ok {
 			diffs = append(diffs, ImageDiff{
 				FilePath:   path,
+				Size:       img.Size,
 				ChangeType: Added,
 			})
 		} else if prev.Size != img.Size {
 			diffs = append(diffs, ImageDiff{
 				FilePath:   path,
+				Size:       img.Size,
 				ChangeType: Modified,
 			})
 		}
@@ -156,6 +158,7 @@ func detectDiff(imageDir string, caches map[string]entity.ImageCache) ([]ImageDi
 		if _, ok := current[path]; !ok {
 			diffs = append(diffs, ImageDiff{
 				FilePath:   path,
+				Size:       0,
 				ChangeType: Deleted,
 			})
 		}
