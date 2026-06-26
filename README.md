@@ -9,15 +9,15 @@ A minimal CLI for managing Markdown content with front matter, organized into a 
 
 | Command | Description |
 |---|---|
-| `cmsc init` | Create a default `cmsc.json` config file in the current directory. Fails if one already exists. |
+| `cmsc setup` | Create a default `cmsc.json` config file in the current directory. Fails if one already exists. |
 | `cmsc new` | Interactively create a new Markdown post with front matter under `content_dir`. Prompts for title, category, and tags. The slug is auto-generated as a UUID (never entered manually) and the date is filled automatically with the current timestamp. |
-| `cmsc` *(no subcommand)* | Read `cmsc.json`, walk `content_dir` for `.md` files, parse each front matter, and build/write the output JSON (`all` / `byCategory` / `byTag`) to `output_file`. Posts with unregistered categories or tags are skipped with a notice. |
+| `cmsc convert` | Read `cmsc.json`, walk `content_dir` for `.md` files, parse each front matter, and build/write the output JSON (`all` / `byCategory` / `byTag`) to `output_file`. Posts with unregistered categories or tags are skipped with a notice. |
 
 ## Quick Start
 
 ```bash
-# 1. Initialize config
-cmsc init
+# 1. setupialize config
+cmsc setup
 
 # 2. Create a new post (interactive)
 cmsc new
@@ -51,15 +51,15 @@ go mod tidy
 
 | コマンド | 説明 |
 |---|---|
-| `cmsc init` | カレントディレクトリにデフォルトの `cmsc.json` を生成します。既に存在する場合は失敗します。 |
+| `cmsc setup` | カレントディレクトリにデフォルトの `cmsc.json` を生成します。既に存在する場合は失敗します。 |
 | `cmsc new` | 対話形式でフロントマター付きの新規Markdown記事を `content_dir` 配下に作成します。タイトル・カテゴリ・タグを順に質問されます。slugはUUIDで自動採番され（手動入力不可）、dateは現在日時が自動で埋め込まれます。 |
-| `cmsc` *(引数なし)* | `cmsc.json` を読み込み、`content_dir` 内の `.md` ファイルを走査してフロントマターを解析し、`output_file` に `all` / `byCategory` / `byTag` を含むJSONを書き出します。未登録のカテゴリ・タグを持つ記事はスキップされ、通知が表示されます。 |
+| `cmsc convert`| `cmsc.json` を読み込み、`content_dir` 内の `.md` ファイルを走査してフロントマターを解析し、`output_file` に `all` / `byCategory` / `byTag` を含むJSONを書き出します。未登録のカテゴリ・タグを持つ記事はスキップされ、通知が表示されます。 |
 
 ## クイックスタート
 
 ```bash
 # 1. 設定ファイルを初期化
-cmsc init
+cmsc setup
 
 # 2. 新規記事を作成（対話形式）
 cmsc new
