@@ -20,9 +20,9 @@ func (c *SetupProjectCommand) Setup() {
 
 	dirs := []string{
 		config.ArticleDir,
-		config.ImagesDir + "/article",
-		config.ImagesDir + "/category",
-		config.ImagesDir + "/tag",
+		config.ImageDir + "/article",
+		config.ImageDir + "/category",
+		config.ImageDir + "/tag",
 	}
 
 	for _, dir := range dirs {

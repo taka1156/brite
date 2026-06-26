@@ -23,12 +23,3 @@ func loadConfig() (entity.CMSConfig, error) {
 
 	return config, nil
 }
-
-// TaxonomyDefinitionのスライスからnameだけを取り出す
-func taxonomyNames(defs []entity.TaxonomyDefinition) []string {
-	names := make([]string, 0, len(defs))
-	for _, d := range defs {
-		names = append(names, d.Name)
-	}
-	return names
-}

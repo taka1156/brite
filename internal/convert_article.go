@@ -34,25 +34,12 @@ func (c *ConvertArticleCommand) Convert(jsonNames entity.JsonNames) {
 	// 出力データの初期化
 	data := &entity.ResponseData{
 		All:        []entity.Post{},
-		ByCategory: make(map[string]entity.TaxonomyEntry),
-		ByTag:      make(map[string]entity.TaxonomyEntry),
+		ByCategory: make(map[string][]entity.PostSummary),
+		ByTag:      make(map[string][]entity.PostSummary),
 	}
 
-	// カテゴリごとの記事一覧を初期化
-	// 画象パスも合わせて保持するため、TaxonomyEntry構造体を使う
-	categoryImages := make(map[string]string, len(config.Categories))
-	data, categoryImages = initializedTaxonomyDefinition(config.Categories, categoryImages, data)
-
-	// タグごとの記事一覧を初期化
-	// 画象パスも合わせて保持するため、TaxonomyEntry構造体を使う
-	tagImages := make(map[string]string, len(config.Tags))
-	data, tagImages = initializedTaxonomyDefinition(config.Tags, tagImages, data)
-
-	categoryNames := taxonomyNames(config.Categories)
-	tagNames := taxonomyNames(config.Tags)
-
 	// article_dir配下のMarkdownファイルを再帰的に探索し、記事データを読み込む
-	data, err = walkMarkdownFiles(config.ArticleDir, data, config, categoryNames, tagNames)
+	data, err = walkMarkdownFiles(config.ArticleDir, data, config, config.Categories, config.Tags)
 	if err != nil {
 		fmt.Println("Error:", err)
 		return
@@ -65,10 +52,10 @@ func (c *ConvertArticleCommand) Convert(jsonNames entity.JsonNames) {
 	}
 
 	for name := range data.ByCategory {
-		sortSlugsByDateDesc(data.ByCategory[name].Summaries, slugToCreatedAt)
+		sortSlugsByDateDesc(data.ByCategory[name], slugToCreatedAt)
 	}
 	for name := range data.ByTag {
-		sortSlugsByDateDesc(data.ByTag[name].Summaries, slugToCreatedAt)
+		sortSlugsByDateDesc(data.ByTag[name], slugToCreatedAt)
 	}
 
 	// JSONへの変換と書き出し（all.json / category.json / tag.json の3ファイルに分割）
@@ -82,31 +69,17 @@ func (c *ConvertArticleCommand) Convert(jsonNames entity.JsonNames) {
 		return
 	}
 
-	categoryOutput := buildTaxonomyOutput(data.ByCategory, categoryImages)
-	if err := writeJSONFile(filepath.Join(config.OutputDir, jsonNames.Category), categoryOutput); err != nil {
+	if err := writeJSONFile(filepath.Join(config.OutputDir, jsonNames.Category), data.ByCategory); err != nil {
 		fmt.Printf("Error writing %s: %v\n", jsonNames.Category, err)
 		return
 	}
 
-	tagOutput := buildTaxonomyOutput(data.ByTag, tagImages)
-	if err := writeJSONFile(filepath.Join(config.OutputDir, jsonNames.Tag), tagOutput); err != nil {
+	if err := writeJSONFile(filepath.Join(config.OutputDir, jsonNames.Tag), data.ByTag); err != nil {
 		fmt.Printf("Error writing %s: %v\n", jsonNames.Tag, err)
 		return
 	}
 
 	fmt.Printf("Success! Exported %s, %s, %s to %s\n", jsonNames.All, jsonNames.Category, jsonNames.Tag, config.OutputDir)
-}
-
-// カテゴリ/タグの初期化（画像パスの保持と、空の記事一覧を作成）
-func initializedTaxonomyDefinition(taxonomies []entity.TaxonomyDefinition, images map[string]string, data *entity.ResponseData) (*entity.ResponseData, map[string]string) {
-	for _, t := range taxonomies {
-		images[t.Name] = t.Image
-		data.ByTag[t.Name] = entity.TaxonomyEntry{
-			Image:     "",
-			Summaries: []entity.PostSummary{},
-		}
-	}
-	return data, images
 }
 
 // 全記事を走査し、summaryとcontentを読み込む。カテゴリ/タグごとの記事一覧も作成する。
@@ -157,12 +130,9 @@ func walkMarkdownFiles(contentDir string, data *entity.ResponseData, config enti
 		data.All = append(data.All, post)
 
 		if post.Summary.Category != "" && contains(categoryNames, post.Summary.Category) {
-			for _, c := range config.Categories {
-				if c.Name == post.Summary.Category {
-					entry := data.ByCategory[c.Name]
-					entry.Image = c.Image
-					entry.Summaries = append(entry.Summaries, post.Summary)
-					data.ByCategory[c.Name] = entry
+			for _, categoryName := range config.Categories {
+				if categoryName == post.Summary.Category {
+					data.ByCategory[categoryName] = append(data.ByCategory[categoryName], post.Summary)
 					break
 				}
 			}
@@ -172,12 +142,9 @@ func walkMarkdownFiles(contentDir string, data *entity.ResponseData, config enti
 
 		for _, tag := range post.Summary.Tags {
 			if tag != "" && contains(tagNames, tag) {
-				for _, t := range config.Tags {
-					if t.Name == tag {
-						entry := data.ByTag[t.Name]
-						entry.Image = t.Image
-						entry.Summaries = append(entry.Summaries, post.Summary)
-						data.ByTag[t.Name] = entry
+				for _, tagName := range config.Tags {
+					if tagName == tag {
+						data.ByTag[tagName] = append(data.ByTag[tagName], post.Summary)
 						break
 					}
 				}
@@ -198,19 +165,6 @@ func walkMarkdownFiles(contentDir string, data *entity.ResponseData, config enti
 	sortPostsByDateDesc(data.All)
 
 	return data, nil
-}
-
-// {名前: [articles,...]} と {名前: image} を合成して、
-// category.json / tag.json 用の {名前: {image, articles}} 構造を組み立てる
-func buildTaxonomyOutput(taxonomyEntries map[string]entity.TaxonomyEntry, imagesByName map[string]string) map[string]entity.TaxonomyEntry {
-	output := make(map[string]entity.TaxonomyEntry, len(taxonomyEntries))
-	for name, entries := range taxonomyEntries {
-		output[name] = entity.TaxonomyEntry{
-			Image:     imagesByName[name],
-			Summaries: entries.Summaries,
-		}
-	}
-	return output
 }
 
 // 任意のデータをインデント付きJSONとしてファイルに書き出す共通処理

@@ -8,50 +8,33 @@
       "description": "The directory path where your Markdown files (.md) are stored.",
       "default": "./articles"
     },
-    "imagesDir": {
+    "imageDir": {
       "type": "string",
       "description": "The directory path where your image files are stored.",
       "default": "./images"
     },
     "outputDir": {
       "type": "string",
-      "description": "The directory path where all build outputs are exported: all.json (full post data including content), category.json (category -> {image, slugs}), and tag.json (tag -> {image, slugs}).",
+      "description": "The directory path where all build outputs are exported.",
       "default": "./dist"
     },
     "categories": {
       "type": "array",
-      "description": "A whitelist of allowed categories, each with an optional image path. Unregistered categories found in markdown will be skipped. Image files themselves are not managed by this tool; only the path string is carried through to the output.",
+      "description": "A whitelist of allowed categories. Unregistered categories found in markdown will be skipped.",
       "items": {
-        "$ref": "#/$defs/taxonomyDefinition"
+        "type": "string"
       },
       "uniqueItems": true
     },
     "tags": {
       "type": "array",
-      "description": "A whitelist of allowed tags, each with an optional image path. Unregistered tags found in markdown will be skipped. Image files themselves are not managed by this tool; only the path string is carried through to the output.",
+      "description": "A whitelist of allowed tags. Unregistered tags found in markdown will be skipped.",
       "items": {
-        "$ref": "#/$defs/taxonomyDefinition"
+        "type": "string"
       },
       "uniqueItems": true
     }
   },
   "required": ["articleDir", "imagesDir", "outputDir", "categories", "tags"],
-  "additionalProperties": false,
-  "$defs": {
-    "taxonomyDefinition": {
-      "type": "object",
-      "properties": {
-        "name": {
-          "type": "string",
-          "description": "The category or tag name, matched against the front matter of each post."
-        },
-        "image": {
-          "type": "string",
-          "description": "An optional path or URL to an image representing this category or tag (e.g. for use as a thumbnail or banner). This tool does not read, copy, or validate the image file itself."
-        }
-      },
-      "required": ["name"],
-      "additionalProperties": false
-    }
-  }
+  "additionalProperties": false
 }

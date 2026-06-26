@@ -28,16 +28,10 @@ func (c *InitializeConfigCommand) Initialize() {
 	defaultConfig := entity.CMSConfig{
 		Schema:     "./cms.schema.json",
 		ArticleDir: "./articles",
-		ImagesDir:  "./images",
+		ImageDir:   "./images",
 		OutputDir:  "./dist",
-		Categories: []entity.TaxonomyDefinition{
-			{Name: "Tech", Image: ""},
-			{Name: "Log", Image: ""},
-		},
-		Tags: []entity.TaxonomyDefinition{
-			{Name: "Go", Image: ""},
-			{Name: "CLI", Image: ""},
-		},
+		Categories: []string{"tech", "life", "hobby"},
+		Tags:       []string{"Go", "CLI"},
 	}
 
 	// JSONに変換

@@ -41,14 +41,14 @@ func (c *AddArticleCommand) Add() {
 	}
 
 	// 2. categoryの選択（一覧から番号選択）
-	category, err := promptSingleSelect(reader, "Category", taxonomyNames(config.Categories))
+	category, err := promptSingleSelect(reader, "Category", config.Categories)
 	if err != nil {
 		fmt.Println("Error:", err)
 		return
 	}
 
 	// 3. tagの選択（一覧から複数選択、カンマ区切り番号）
-	tags, err := promptMultiSelect(reader, "Tags", taxonomyNames(config.Tags))
+	tags, err := promptMultiSelect(reader, "Tags", config.Tags)
 	if err != nil {
 		fmt.Println("Error:", err)
 		return

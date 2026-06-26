@@ -1,62 +1,23 @@
 {
   "$schema": "../cmsc.schema.json",
   "articleDir": "./articles",
-  "imagesDir": "./images",
+  "imageDir": "./images",
   "outputDir": "./output",
   "categories": [
-    {
-      "name": "commandline",
-      "image": "./images/category/commandline.svg"
-    },
-    {
-      "name": "frontend",
-      "image": "./images/category/frontend.svg"
-    },
-    {
-      "name": "backend",
-      "image": "./images/category/backend.svg"
-    },
-    {
-      "name": "infrastructure",
-      "image": "./images/category/infrastructure.svg"
-    },
-    {
-      "name": "tool",
-      "image": "./images/category/tool.svg"
-    },
-    {
-      "name": "programming_contest",
-      "image": "./images/category/programming_contest.svg"
-    }
+    "commandline",
+    "frontend",
+    "backend",
+    "infrastructure",
+    "tool",
+    "programming_contest"
   ],
   "tags": [
-    {
-      "name": "go",
-      "image": "./images/tag/go.png"
-    },
-    {
-      "name": "python",
-      "image": "./images/tag/python.png"
-    },
-    {
-      "name": "react",
-      "image": "./images/tag/react.svg"
-    },
-    {
-      "name": "nextjs",
-      "image": "./images/tag/nextjs.svg"
-    },
-    {
-      "name": "vitejs",
-      "image": "./images/tag/vitejs.svg"
-    },
-    {
-      "name": "electron",
-      "image": "./images/tag/electron.png"
-    },
-    {
-      "name": "docker",
-      "image": "./images/tag/docker.png"
-    }
+    "go",
+    "python",
+    "react",
+    "nextjs",
+    "vitejs",
+    "electron",
+    "docker"
   ]
 }

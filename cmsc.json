@@ -1,53 +1,21 @@
 {
-  "$schema": "./mdc.schema.json",
-  "content_dir": "./content",
-  "output_dir": "./dist",
+  "$schema": "./cmsc.schema.json",
+  "articleDir": "./content",
+  "imageDir": "./images",
+  "outputDir": "./dist",
   "categories": [
-    {
-      "name": "tech",
-      "image": ""
-    },
-    {
-      "name": "idea",
-      "image": ""
-    },
-    {
-      "name": "commandline",
-      "image": ""
-    }
+    "tech",
+    "idea",
+    "commandline"
   ],
   "tags": [
-    {
-      "name": "javascript",
-      "image": ""
-    },
-    {
-      "name": "typescript",
-      "image": ""
-    },
-    {
-      "name": "go",
-      "image": ""
-    },
-    {
-      "name": "python",
-      "image": ""
-    },
-    {
-      "name": "ansible",
-      "image": ""
-    },
-    {
-      "name": "react",
-      "image": ""
-    },
-    {
-      "name": "nextjs",
-      "image": ""
-    },
-    {
-      "name": "nodejs",
-      "image": ""
-    }
+    "javascript",
+    "typescript",
+    "go",
+    "python",
+    "ansible",
+    "react",
+    "nextjs",
+    "nodejs"
   ]
 }
