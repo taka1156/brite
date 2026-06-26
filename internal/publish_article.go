@@ -1,12 +1,9 @@
 package internal
 
 import (
-	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
-	"mime/multipart"
-	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
@@ -112,7 +109,7 @@ func detectDiff(imageDir string, caches map[string]entity.ImageCache) ([]ImageDi
 		if err != nil {
 			return err
 		}
-		if !info.IsDir() {
+		if info.IsDir() {
 			return nil
 		}
 		current[path] = entity.ImageCache{
@@ -185,6 +182,25 @@ func applyDiffs(ctx context.Context, client *s3.Client, bucketName string, diffs
 	return nil
 }
 
+func postOutput(cmsConfig entity.CMSConfig) error {
+	jsonDir := []string{
+		entity.ALL_JSON_FILE_NAME,
+		entity.CATEGORY_JSON_FILE_NAME,
+		entity.TAG_JSON_FILE_NAME,
+	}
+	for _, jsonFile := range jsonDir {
+		filePath := filepath.Join(cmsConfig.OutputDir, jsonFile)
+		key := filepath.Base(filePath)
+		if err := uploadFileToR2(context.TODO(), nil, cmsConfig.R2.BucketName, filePath, key); err != nil {
+			return fmt.Errorf("failed to add file %s to multipart: %w", filePath, err)
+		}
+	}
+
+	fmt.Println("Successfully uploaded output files.")
+
+	return nil
+}
+
 func newS3Client(cmsConfig entity.CMSConfig) (*s3.Client, error) {
 	accessKey := os.Getenv("R2_ACCESS_KEY_ID")
 	secretKey := os.Getenv("R2_SECRET_ACCESS_KEY")
@@ -241,60 +257,6 @@ func deleteFileFromR2(ctx context.Context, client *s3.Client, bucketName, key st
 	}
 
 	fmt.Printf("Deleted %s from R2 bucket %s\n", key, bucketName)
-
-	return nil
-}
-
-func postOutput(cmsConfig entity.CMSConfig) error {
-	outputDir := []string{
-		entity.ALL_JSON_FILE_NAME,
-		entity.CATEGORY_JSON_FILE_NAME,
-		entity.TAG_JSON_FILE_NAME,
-	}
-
-	var body bytes.Buffer
-	writer := multipart.NewWriter(&body)
-
-	for _, filePath := range outputDir {
-		path := filepath.Join(cmsConfig.OutputDir, filePath)
-		data, err := os.ReadFile(path)
-		if err != nil {
-			return fmt.Errorf("failed to read file %s: %w", path, err)
-		}
-
-		part, err := writer.CreateFormFile("files", filepath.Base(path))
-		if err != nil {
-			return fmt.Errorf("failed to create form file for %s: %w", path, err)
-		}
-
-		if _, err := part.Write(data); err != nil {
-			return fmt.Errorf("failed to write file %s to form: %w", path, err)
-		}
-	}
-
-	if err := writer.Close(); err != nil {
-		return fmt.Errorf("failed to close multipart writer: %w", err)
-	}
-
-	req, err := http.NewRequest("POST", cmsConfig.R2.Endpoint, &body)
-	if err != nil {
-		return fmt.Errorf("failed to create HTTP request: %w", err)
-	}
-	req.Header.Set("Content-Type", writer.FormDataContentType())
-	req.Header.Set("Authorization", "Bearer "+os.Getenv("R2_AUTH_TOKEN"))
-
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		return fmt.Errorf("failed to send HTTP request: %w", err)
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("failed to upload files, status code: %d", resp.StatusCode)
-	}
-
-	fmt.Println("Successfully uploaded output files.")
 
 	return nil
 }
