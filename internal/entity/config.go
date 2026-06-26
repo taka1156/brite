@@ -21,26 +21,30 @@ type CMSConfig struct {
 	Tags       []TaxonomyDefinition `json:"tags"`
 }
 
-// 各記事のデータ構造
-type Post struct {
-	Slug      string   `json:"slug"`
-	Title     string   `json:"title"`
-	Category  string   `json:"category"`
-	Tags      []string `json:"tags"`
+type PostSummary struct {
+	Slug      string   `json:"slug" yaml:"-"`
+	Title     string   `json:"title" yaml:"title"`
+	Category  string   `json:"category" yaml:"category"`
+	Tags      []string `json:"tags" yaml:"tags"`
 	CreatedAt string   `json:"created_at" yaml:"created_at"`
 	UpdatedAt string   `json:"updated_at" yaml:"updated_at"`
-	Content   string   `json:"content" yaml:"-"`
+}
+
+// 各記事のデータ構造
+type Post struct {
+	Summary PostSummary `json:"summary" yaml:"summary"`
+	Content string      `json:"content" yaml:"-"`
 }
 
 // 最終出力のデータ構造（byCategory/byTagはslug参照のみで本文の重複を避ける）
 type ResponseData struct {
-	All        []Post              `json:"all"`
-	ByCategory map[string][]string `json:"byCategory"`
-	ByTag      map[string][]string `json:"byTag"`
+	All        []Post                   `json:"all"`
+	ByCategory map[string]TaxonomyEntry `json:"byCategory"`
+	ByTag      map[string]TaxonomyEntry `json:"byTag"`
 }
 
 // category.json / tag.json の1エントリ（画像情報 + 紐づく記事slug一覧）
 type TaxonomyEntry struct {
-	Image string   `json:"image"`
-	Slugs []string `json:"slugs"`
+	Image     string        `json:"image"`
+	Summaries []PostSummary `json:"summaries"`
 }

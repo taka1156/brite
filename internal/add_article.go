@@ -64,7 +64,7 @@ func (c *AddArticleCommand) Add() {
 	// 5. dateの自動埋め込み
 	date := time.Now().Format(time.RFC3339)
 
-	post := entity.Post{
+	post := entity.PostSummary{
 		Slug:      slug,
 		Title:     title,
 		Category:  category,
@@ -83,7 +83,7 @@ func (c *AddArticleCommand) Add() {
 }
 
 // フロントマター付きMarkdownファイルを書き出す
-func writePostFile(contentDir string, post entity.Post) error {
+func writePostFile(contentDir string, post entity.PostSummary) error {
 	if err := os.MkdirAll(contentDir, 0755); err != nil {
 		return fmt.Errorf("failed to create content_dir: %w", err)
 	}
