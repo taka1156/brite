@@ -33,6 +33,24 @@
         "type": "string"
       },
       "uniqueItems": true
+    },
+    "r2": {
+      "type": "object",
+      "description": "Cloudflare R2 configuration for image uploads.",
+      "properties": {
+        "bucketName": {
+          "type": "string",
+          "description": "R2 bucket name."
+        },
+        "baseUrl": {
+          "type": "string",
+          "description": "Base URL for public access. e.g. https://assets.your-domain.com"
+        }
+      },
+      "required": [
+        "bucketName",
+        "baseUrl"
+      ]
     }
   },
   "required": ["articleDir", "imageDir", "outputDir", "categories", "tags"],
