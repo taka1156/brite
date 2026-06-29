@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"path/filepath"
 
 	"github.com/taka1156/brite/internal/entity"
 )
@@ -14,8 +15,8 @@ func NewInitializeConfigCommand() *InitializeConfigCommand {
 	return &InitializeConfigCommand{}
 }
 
-func (c *InitializeConfigCommand) Initialize() {
-	configName := entity.CONFIG_FILE_NAME
+func (c *InitializeConfigCommand) Initialize(clientConfig entity.ClientConfig) {
+	configName := clientConfig.ConfigPath
 
 	// Check if the config file already exists
 	if _, err := os.Stat(configName); err == nil {
@@ -36,6 +37,11 @@ func (c *InitializeConfigCommand) Initialize() {
 	jsonBytes, err := json.MarshalIndent(defaultConfig, "", "  ")
 	if err != nil {
 		fmt.Printf("Error generating default config: %v\n", err)
+		return
+	}
+
+	if err := os.MkdirAll(filepath.Dir(configName), 0755); err != nil {
+		fmt.Printf("Error creating directory: %v\n", err)
 		return
 	}
 

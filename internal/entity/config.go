@@ -1,5 +1,9 @@
 package entity
 
+type ClientConfig struct {
+	ConfigPath string
+}
+
 type JsonNames struct {
 	All      string
 	Category string

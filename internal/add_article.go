@@ -21,8 +21,8 @@ func NewAddArticleCommand() *AddArticleCommand {
 	return &AddArticleCommand{}
 }
 
-func (c *AddArticleCommand) Add() {
-	config, err := loadJson[entity.BriteConfig](entity.CONFIG_FILE_NAME)
+func (c *AddArticleCommand) Add(clientConfig entity.ClientConfig) {
+	config, err := loadJson[entity.BriteConfig](clientConfig.ConfigPath)
 	if err != nil {
 		fmt.Println("Error:", err)
 		return
