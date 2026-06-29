@@ -21,8 +21,8 @@ func NewAddArticleCommand() *AddArticleCommand {
 	return &AddArticleCommand{}
 }
 
-func (c *AddArticleCommand) Add() {
-	config, err := loadJson[entity.BriteConfig](entity.CONFIG_FILE_NAME)
+func (c *AddArticleCommand) Add(clientConfig entity.ClientConfig) {
+	config, err := loadJson[entity.BriteConfig](clientConfig.ConfigPath)
 	if err != nil {
 		fmt.Println("Error:", err)
 		return
@@ -66,6 +66,7 @@ func (c *AddArticleCommand) Add() {
 	post := entity.PostSummary{
 		Slug:      slug,
 		Title:     title,
+		Thumbnail: "",
 		Category:  category,
 		Tags:      tags,
 		CreatedAt: date,
@@ -87,14 +88,9 @@ func writePostFile(articleDir string, post entity.PostSummary) error {
 		return fmt.Errorf("failed to create article_dir: %w", err)
 	}
 
-	frontMatter := struct {
-		Title     string   `yaml:"title"`
-		Category  string   `yaml:"category,omitempty"`
-		Tags      []string `yaml:"tags,omitempty"`
-		CreatedAt string   `yaml:"created_at"`
-		UpdatedAt string   `yaml:"updated_at"`
-	}{
+	frontMatter := entity.PostSummary{
 		Title:     post.Title,
+		Thumbnail: post.Thumbnail,
 		Category:  post.Category,
 		Tags:      post.Tags,
 		CreatedAt: post.CreatedAt,

@@ -22,9 +22,9 @@ func NewConvertArticleCommand() *ConvertArticleCommand {
 	return &ConvertArticleCommand{}
 }
 
-func (c *ConvertArticleCommand) Convert(jsonNames entity.JsonNames) {
+func (c *ConvertArticleCommand) Convert(clientConfig entity.ClientConfig, jsonNames entity.JsonNames) {
 
-	config, err := loadJson[entity.BriteConfig](entity.CONFIG_FILE_NAME)
+	config, err := loadJson[entity.BriteConfig](clientConfig.ConfigPath)
 	if err != nil {
 		fmt.Println("Error:", err)
 		return

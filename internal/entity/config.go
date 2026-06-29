@@ -1,5 +1,9 @@
 package entity
 
+type ClientConfig struct {
+	ConfigPath string
+}
+
 type JsonNames struct {
 	All      string
 	Category string
@@ -26,6 +30,7 @@ type BriteConfig struct {
 type PostSummary struct {
 	Slug      string   `json:"slug" yaml:"-"`
 	Title     string   `json:"title" yaml:"title"`
+	Thumbnail string   `json:"thumbnail" yaml:"thumbnail"`
 	Category  string   `json:"category" yaml:"category"`
 	Tags      []string `json:"tags" yaml:"tags"`
 	CreatedAt string   `json:"created_at" yaml:"created_at"`
