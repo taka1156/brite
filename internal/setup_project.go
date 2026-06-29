@@ -13,8 +13,8 @@ func NewSetupProjectCommand() *SetupProjectCommand {
 	return &SetupProjectCommand{}
 }
 
-func (c *SetupProjectCommand) Setup() {
-	config, err := loadJson[entity.BriteConfig](entity.CONFIG_FILE_NAME)
+func (c *SetupProjectCommand) Setup(clientConfig entity.ClientConfig) {
+	config, err := loadJson[entity.BriteConfig](*clientConfig.ConfigPath)
 	if err != nil {
 		fmt.Println("Error:", err)
 		return

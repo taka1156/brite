@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"log"
 	"os"
@@ -23,12 +24,14 @@ func main() {
 	}
 
 	cmd := struct {
+		*internal.HelpBriteCommand
 		*internal.InitializeConfigCommand
 		*internal.SetupProjectCommand
 		*internal.AddArticleCommand
 		*internal.ConvertArticleCommand
 		*internal.PublishArticleCommand
 	}{
+		internal.NewHelpBriteCommand(),
 		internal.NewInitializeConfigCommand(),
 		internal.NewSetupProjectCommand(),
 		internal.NewAddArticleCommand(),
@@ -36,23 +39,30 @@ func main() {
 		internal.NewPublishArticleCommand(),
 	}
 
+	flag.Parse()
+	clientConfig := entity.ClientConfig{}
+	clientConfig.ConfigPath = flag.String("config-path", entity.CONFIG_FILE_NAME, "local path URL to base image config JSON")
+
 	// コマンド引数のチェック
 	if len(os.Args) > 1 {
 		switch os.Args[1] {
+		case "help":
+			cmd.Help()
+			return
 		case "init":
-			cmd.Initialize()
+			cmd.Initialize(clientConfig)
 			return
 		case "setup":
-			cmd.Setup()
+			cmd.Setup(clientConfig)
 			return
 		case "new":
-			cmd.Add()
+			cmd.Add(clientConfig)
 			return
 		case "convert":
-			cmd.Convert(jsonNames)
+			cmd.Convert(clientConfig, jsonNames)
 			return
 		case "publish":
-			cmd.Publish()
+			cmd.Publish(clientConfig)
 			return
 		default:
 			fmt.Println("Unknown command. Available commands: init, setup, new, convert, publish")
