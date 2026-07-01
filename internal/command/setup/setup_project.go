@@ -1,20 +1,21 @@
-package internal
+package setup
 
 import (
 	"fmt"
 	"os"
 
 	"github.com/taka1156/brite/internal/entity"
+	"github.com/taka1156/brite/internal/utils"
 )
 
-type SetupProjectCommand struct{}
+type SetupProject struct{}
 
-func NewSetupProjectCommand() *SetupProjectCommand {
-	return &SetupProjectCommand{}
+func NewSetupProject() *SetupProject {
+	return &SetupProject{}
 }
 
-func (c *SetupProjectCommand) Setup(clientConfig entity.ClientConfig) {
-	config, err := loadJson[entity.BriteConfig](clientConfig.ConfigPath)
+func (c *SetupProject) Setup(clientConfig entity.ClientConfig) {
+	config, err := utils.LoadJson[entity.BriteConfig](clientConfig.ConfigPath)
 	if err != nil {
 		fmt.Println("Error:", err)
 		return

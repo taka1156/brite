@@ -1,4 +1,4 @@
-package internal
+package help
 
 import "fmt"
 
@@ -48,12 +48,12 @@ Examples:
 	brite convert --config-path brite.portfolio.json
 	brite publish --config-path brite.blog.json`
 
-type HelpBriteCommand struct{}
+type HelpBrite struct{}
 
-func NewHelpBriteCommand() *HelpBriteCommand {
-	return &HelpBriteCommand{}
+func NewHelpBrite() *HelpBrite {
+	return &HelpBrite{}
 }
 
-func (c *HelpBriteCommand) Help() {
+func (c *HelpBrite) Help() {
 	fmt.Println(HELP_MSG)
 }
