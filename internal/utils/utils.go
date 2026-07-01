@@ -1,4 +1,4 @@
-package internal
+package utils
 
 import (
 	"encoding/json"
@@ -8,7 +8,7 @@ import (
 	"github.com/taka1156/brite/internal/entity"
 )
 
-func loadJson[T entity.BriteConfig | []entity.ImageCache](path string) (T, error) {
+func LoadJson[T entity.BriteConfig | []entity.ImageCache](path string) (T, error) {
 	var config T
 
 	configFile, err := os.ReadFile(path)

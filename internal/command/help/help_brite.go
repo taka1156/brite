@@ -1,4 +1,4 @@
-package internal
+package help
 
 import "fmt"
 
@@ -31,7 +31,7 @@ Commands:
             and ENABLE_PATH_STYLE_ENDPOINTS environment variables.
 
 Options:
-  --config  Path to the config file (default: brite.json)
+  --config-path  Path to the config file (default: brite.json)
 
 Examples:
   brite init
@@ -42,18 +42,18 @@ Examples:
 	brite publish
 
   multiple project workflow:
-	brite init --config brite.blog.json
-	brite setup --config brite.portfolio.json
-	brite new --config brite.blog.json
-	brite convert --config brite.portfolio.json
-	brite publish --config brite.blog.json`
+	brite init --config-path brite.blog.json
+	brite setup --config-path brite.portfolio.json
+	brite new --config-path brite.blog.json
+	brite convert --config-path brite.portfolio.json
+	brite publish --config-path brite.blog.json`
 
-type HelpBriteCommand struct{}
+type HelpBrite struct{}
 
-func NewHelpBriteCommand() *HelpBriteCommand {
-	return &HelpBriteCommand{}
+func NewHelpBrite() *HelpBrite {
+	return &HelpBrite{}
 }
 
-func (c *HelpBriteCommand) Help() {
+func (c *HelpBrite) Help() {
 	fmt.Println(HELP_MSG)
 }

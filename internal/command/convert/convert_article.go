@@ -1,4 +1,4 @@
-package internal
+package convert
 
 import (
 	"bytes"
@@ -13,18 +13,19 @@ import (
 	"time"
 
 	"github.com/taka1156/brite/internal/entity"
+	"github.com/taka1156/brite/internal/utils"
 	"gopkg.in/yaml.v3"
 )
 
-type ConvertArticleCommand struct{}
+type ConvertArticle struct{}
 
-func NewConvertArticleCommand() *ConvertArticleCommand {
-	return &ConvertArticleCommand{}
+func NewConvertArticle() *ConvertArticle {
+	return &ConvertArticle{}
 }
 
-func (c *ConvertArticleCommand) Convert(clientConfig entity.ClientConfig, jsonNames entity.JsonNames) {
+func (c *ConvertArticle) Convert(clientConfig entity.ClientConfig, jsonNames entity.JsonNames) {
 
-	config, err := loadJson[entity.BriteConfig](clientConfig.ConfigPath)
+	config, err := utils.LoadJson[entity.BriteConfig](clientConfig.ConfigPath)
 	if err != nil {
 		fmt.Println("Error:", err)
 		return
@@ -115,7 +116,7 @@ func replaceImagePaths(content, baseUrl, imageDir string) string {
 		}
 		before := sub[1]
 		path := sub[2]
-		after := sub[3]
+		after := sub[4]
 
 		// Normalize the relative path and check if it is under imageDir
 		clean := filepath.Clean(path)

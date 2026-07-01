@@ -1,4 +1,4 @@
-package internal
+package add
 
 import (
 	"bufio"
@@ -12,17 +12,18 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/taka1156/brite/internal/entity"
+	"github.com/taka1156/brite/internal/utils"
 	"gopkg.in/yaml.v3"
 )
 
-type AddArticleCommand struct{}
+type AddArticle struct{}
 
-func NewAddArticleCommand() *AddArticleCommand {
-	return &AddArticleCommand{}
+func NewAddArticle() *AddArticle {
+	return &AddArticle{}
 }
 
-func (c *AddArticleCommand) Add(clientConfig entity.ClientConfig) {
-	config, err := loadJson[entity.BriteConfig](clientConfig.ConfigPath)
+func (c *AddArticle) Add(clientConfig entity.ClientConfig) {
+	config, err := utils.LoadJson[entity.BriteConfig](clientConfig.ConfigPath)
 	if err != nil {
 		fmt.Println("Error:", err)
 		return

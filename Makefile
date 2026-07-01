@@ -9,10 +9,13 @@ DIST_TARGETS := \
 	darwin/arm64/tar.gz \
 	windows/amd64/exe
 
-.PHONY: fmt run build dist
+.PHONY: fmt test run build dist
 
 fmt:
 	go fmt ./...
+
+test:
+	go test ./...
 
 run:
 	go run $(CMD) $(RUN_ARGS)

@@ -47,15 +47,24 @@ brite publish
 
 ## 設定ファイル: `brite.json`
 
-| フィールド | 説明 |
-|---|---|
+| フィールド | 説明 | 必須 |
+|---|---|---|
 | `articleDir` | `.md` ファイルを格納するディレクトリ | true |
 | `imageDir` | 画像を保存するルートディレクトリ | true |
 | `outputDir` | 生成されるJSONの出力先パス | true |
+| `cacheDir` | キャッシュファイル（`.caches.json`）を格納するディレクトリ | true |
 | `categories` | 許可されるカテゴリのホワイトリスト | true |
 | `tags` | 許可されるタグのホワイトリスト | true |
 | `r2.bucketName` | R2バケット名 | false |
 | `r2.baseUrl` | 画像配信用のベースURL（例: `https://assets.your-domain.com`） | false |
+
+## コマンドラインフラグ
+
+全コマンドで以下のフラグが使用できます:
+
+| フラグ | デフォルト | 説明 |
+|---|---|---|
+| `--config-path` | `brite.json` | `brite.json` 設定ファイルのパス |
 
 ## 環境変数
 

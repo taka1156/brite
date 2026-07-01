@@ -1,4 +1,4 @@
-package internal
+package initialize
 
 import (
 	"encoding/json"
@@ -9,13 +9,13 @@ import (
 	"github.com/taka1156/brite/internal/entity"
 )
 
-type InitializeConfigCommand struct{}
+type InitializeConfig struct{}
 
-func NewInitializeConfigCommand() *InitializeConfigCommand {
-	return &InitializeConfigCommand{}
+func NewInitializeConfig() *InitializeConfig {
+	return &InitializeConfig{}
 }
 
-func (c *InitializeConfigCommand) Initialize(clientConfig entity.ClientConfig) {
+func (c *InitializeConfig) Initialize(clientConfig entity.ClientConfig) {
 	configName := clientConfig.ConfigPath
 
 	// Check if the config file already exists
@@ -29,6 +29,7 @@ func (c *InitializeConfigCommand) Initialize(clientConfig entity.ClientConfig) {
 		Schema:     "./brite.schema.json",
 		ArticleDir: "./articles",
 		ImageDir:   "./images",
+		CacheDir:   "./cache",
 		OutputDir:  "./dist",
 		Categories: []string{"tech", "life", "hobby"},
 		Tags:       []string{"Go", "CLI"},
