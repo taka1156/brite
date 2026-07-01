@@ -53,10 +53,19 @@ brite publish
 | `articleDir` | Directory where `.md` files are stored | true |
 | `imageDir` | Root directory for storing images | true |
 | `outputDir` | Output path for generated JSON files | true |
+| `cacheDir` | Directory where cache files (`.caches.json`) are stored | true |
 | `categories` | Whitelist of allowed categories | true |
 | `tags` | Whitelist of allowed tags | true |
 | `r2.bucketName` | R2 bucket name | false |
 | `r2.baseUrl` | Base URL for image delivery (e.g. `https://assets.your-domain.com`) | false |
+
+## Command-line Flags
+
+All commands support the following flag:
+
+| Flag | Default | Description |
+|---|---|---|
+| `--config-path` | `brite.json` | Path to the `brite.json` configuration file |
 
 ## Environment Variables
 
