@@ -16,15 +16,20 @@ type R2Config struct {
 	BaseUrl    string `json:"baseUrl"`
 }
 
+type BadgeConfig struct {
+	Name  string `json:"name"`
+	Image string `json:"image"`
+}
+
 type BriteConfig struct {
-	Schema     string   `json:"$schema"`
-	ArticleDir string   `json:"articleDir"`
-	ImageDir   string   `json:"imageDir"`
-	OutputDir  string   `json:"outputDir"`
-	CacheDir   string   `json:"cacheDir"`
-	Categories []string `json:"categories"`
-	Tags       []string `json:"tags"`
-	R2         R2Config `json:"r2"`
+	Schema     string        `json:"$schema"`
+	ArticleDir string        `json:"articleDir"`
+	ImageDir   string        `json:"imageDir"`
+	OutputDir  string        `json:"outputDir"`
+	CacheDir   string        `json:"cacheDir"`
+	Categories []BadgeConfig `json:"categories"`
+	Tags       []BadgeConfig `json:"tags"`
+	R2         R2Config      `json:"r2"`
 }
 
 type PostSummary struct {
@@ -43,10 +48,16 @@ type Post struct {
 	Content string      `json:"content" yaml:"-"`
 }
 
+type Badge struct {
+	Name  string        `json:"name"`
+	Image string        `json:"image"`
+	Posts []PostSummary `json:"posts"`
+}
+
 type ResponseData struct {
-	All        []Post                   `json:"all"`
-	ByCategory map[string][]PostSummary `json:"byCategory"`
-	ByTag      map[string][]PostSummary `json:"byTag"`
+	All        []Post  `json:"all"`
+	ByCategory []Badge `json:"byCategory"`
+	ByTag      []Badge `json:"byTag"`
 }
 
 type ImageCache struct {

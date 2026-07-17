@@ -34,8 +34,8 @@ func (c *ConvertArticle) Convert(clientConfig entity.ClientConfig, jsonNames ent
 	// Initialize the output data
 	data := &entity.ResponseData{
 		All:        []entity.Post{},
-		ByCategory: make(map[string][]entity.PostSummary),
-		ByTag:      make(map[string][]entity.PostSummary),
+		ByCategory: []entity.Badge{},
+		ByTag:      []entity.Badge{},
 	}
 
 	// Recursively scan the article_dir for Markdown files and read their content
@@ -51,11 +51,11 @@ func (c *ConvertArticle) Convert(clientConfig entity.ClientConfig, jsonNames ent
 		slugToCreatedAt[p.Summary.Slug] = p.Summary.CreatedAt
 	}
 
-	for name := range data.ByCategory {
-		sortSlugsByDateDesc(data.ByCategory[name], slugToCreatedAt)
+	for i := range data.ByCategory {
+		sortSlugsByDateDesc(data.ByCategory[i].Posts, slugToCreatedAt)
 	}
-	for name := range data.ByTag {
-		sortSlugsByDateDesc(data.ByTag[name], slugToCreatedAt)
+	for i := range data.ByTag {
+		sortSlugsByDateDesc(data.ByTag[i].Posts, slugToCreatedAt)
 	}
 
 	if err := os.MkdirAll(config.OutputDir, 0755); err != nil {
@@ -136,10 +136,10 @@ func replaceImagePaths(content, baseUrl, imageDir string) string {
 }
 
 // walkMarkdownFiles scans all articles, reads their summary and content, and creates lists of articles by category/tag.
-func walkMarkdownFiles(contentDir string, data *entity.ResponseData, config entity.BriteConfig, categoryNames, tagNames []string) (*entity.ResponseData, error) {
-	contains := func(list []string, item string) bool {
+func walkMarkdownFiles(contentDir string, data *entity.ResponseData, config entity.BriteConfig, categoryNames, tagNames []entity.BadgeConfig) (*entity.ResponseData, error) {
+	contains := func(list []entity.BadgeConfig, item string) bool {
 		for _, x := range list {
-			if x == item {
+			if x.Name == item {
 				return true
 			}
 		}
@@ -183,13 +183,17 @@ func walkMarkdownFiles(contentDir string, data *entity.ResponseData, config enti
 
 		// Categorize the post by its category
 		for _, category := range config.Categories {
-			data.ByCategory[category] = []entity.PostSummary{}
+			data.ByCategory = append(data.ByCategory, entity.Badge{
+				Name:  category.Name,
+				Image: category.Image,
+				Posts: []entity.PostSummary{},
+			})
 		}
 
 		if post.Summary.Category != "" && contains(categoryNames, post.Summary.Category) {
-			for _, categoryName := range config.Categories {
-				if categoryName == post.Summary.Category {
-					data.ByCategory[categoryName] = append(data.ByCategory[categoryName], post.Summary)
+			for i, category := range config.Categories {
+				if category.Name == post.Summary.Category {
+					data.ByCategory[i].Posts = append(data.ByCategory[i].Posts, post.Summary)
 					break
 				}
 			}
@@ -199,14 +203,18 @@ func walkMarkdownFiles(contentDir string, data *entity.ResponseData, config enti
 
 		// Tags posts by their tags
 		for _, tag := range config.Tags {
-			data.ByTag[tag] = []entity.PostSummary{}
+			data.ByTag = append(data.ByTag, entity.Badge{
+				Name:  tag.Name,
+				Image: tag.Image,
+				Posts: []entity.PostSummary{},
+			})
 		}
 
 		for _, tag := range post.Summary.Tags {
 			if tag != "" && contains(tagNames, tag) {
-				for _, tagName := range config.Tags {
-					if tagName == tag {
-						data.ByTag[tagName] = append(data.ByTag[tagName], post.Summary)
+				for i, tagConfig := range config.Tags {
+					if tagConfig.Name == tag {
+						data.ByTag[i].Posts = append(data.ByTag[i].Posts, post.Summary)
 						break
 					}
 				}
