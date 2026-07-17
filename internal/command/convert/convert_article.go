@@ -181,6 +181,11 @@ func walkMarkdownFiles(contentDir string, data *entity.ResponseData, config enti
 
 		data.All = append(data.All, post)
 
+		// Categorize the post by its category
+		for _, category := range config.Categories {
+			data.ByCategory[category] = []entity.PostSummary{}
+		}
+
 		if post.Summary.Category != "" && contains(categoryNames, post.Summary.Category) {
 			for _, categoryName := range config.Categories {
 				if categoryName == post.Summary.Category {
@@ -190,6 +195,11 @@ func walkMarkdownFiles(contentDir string, data *entity.ResponseData, config enti
 			}
 		} else if post.Summary.Category != "" {
 			fmt.Printf("Notice: Skipped unregistered category -> %s (%s)\n", post.Summary.Category, path)
+		}
+
+		// Tags posts by their tags
+		for _, tag := range config.Tags {
+			data.ByTag[tag] = []entity.PostSummary{}
 		}
 
 		for _, tag := range post.Summary.Tags {
