@@ -31,8 +31,15 @@ func (c *InitializeConfig) Initialize(clientConfig entity.ClientConfig) {
 		ImageDir:   "./images",
 		CacheDir:   "./cache",
 		OutputDir:  "./dist",
-		Categories: []string{"tech", "life", "hobby"},
-		Tags:       []string{"Go", "CLI"},
+		Categories: []entity.BadgeConfig{
+			{Name: "tech", Image: ""},
+			{Name: "life", Image: ""},
+			{Name: "hobby", Image: ""},
+		},
+		Tags: []entity.BadgeConfig{
+			{Name: "Go", Image: ""},
+			{Name: "CLI", Image: ""},
+		},
 	}
 
 	jsonBytes, err := json.MarshalIndent(defaultConfig, "", "  ")
