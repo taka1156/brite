@@ -90,12 +90,13 @@ func writePostFile(articleDir string, post entity.PostSummary) error {
 	}
 
 	frontMatter := entity.PostSummary{
-		Title:     post.Title,
-		Thumbnail: post.Thumbnail,
-		Category:  post.Category,
-		Tags:      post.Tags,
-		CreatedAt: post.CreatedAt,
-		UpdatedAt: post.UpdatedAt,
+		Title:       post.Title,
+		Description: post.Description,
+		Thumbnail:   post.Thumbnail,
+		Category:    post.Category,
+		Tags:        post.Tags,
+		CreatedAt:   post.CreatedAt,
+		UpdatedAt:   post.UpdatedAt,
 	}
 
 	yamlBytes, err := yaml.Marshal(frontMatter)
