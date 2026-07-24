@@ -165,7 +165,7 @@ func TestPromptMultiSelect(t *testing.T) {
 }
 
 func TestWritePostFile(t *testing.T) {
-	basePost := entity.PostSummary{
+	basePost := entity.FrontMatterSummary{
 		Slug:      "test-slug",
 		Title:     "Test Article",
 		Category:  "tech",

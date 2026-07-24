@@ -131,18 +131,18 @@ func TestSortSlugsByDateDesc(t *testing.T) {
 }
 
 func TestSortPostsByDateDesc(t *testing.T) {
-	makePost := func(slug, date string) entity.Post {
-		return entity.Post{Summary: entity.PostSummary{Slug: slug, CreatedAt: date}}
+	makePost := func(slug, date string) entity.PostArticle {
+		return entity.PostArticle{Summary: entity.PostSummary{Slug: slug, CreatedAt: date}}
 	}
 
 	tests := []struct {
 		name      string
-		posts     []entity.Post
+		posts     []entity.PostArticle
 		wantOrder []string
 	}{
 		{
 			name: "sorts newest first",
-			posts: []entity.Post{
+			posts: []entity.PostArticle{
 				makePost("a", "2024-01-01T00:00:00Z"),
 				makePost("c", "2024-03-01T00:00:00Z"),
 				makePost("b", "2024-02-01T00:00:00Z"),
@@ -151,7 +151,7 @@ func TestSortPostsByDateDesc(t *testing.T) {
 		},
 		{
 			name: "invalid date goes to end",
-			posts: []entity.Post{
+			posts: []entity.PostArticle{
 				makePost("invalid", "not-a-date"),
 				makePost("valid", "2024-01-01T00:00:00Z"),
 			},
@@ -159,7 +159,7 @@ func TestSortPostsByDateDesc(t *testing.T) {
 		},
 		{
 			name: "same date preserves original order",
-			posts: []entity.Post{
+			posts: []entity.PostArticle{
 				makePost("first", time.Date(2024, 1, 1, 0, 0, 0, 0, time.UTC).Format(time.RFC3339)),
 				makePost("second", time.Date(2024, 1, 1, 0, 0, 0, 0, time.UTC).Format(time.RFC3339)),
 			},
@@ -169,7 +169,7 @@ func TestSortPostsByDateDesc(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			posts := make([]entity.Post, len(tt.posts))
+			posts := make([]entity.PostArticle, len(tt.posts))
 			copy(posts, tt.posts)
 
 			sortPostsByDateDesc(posts)

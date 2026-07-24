@@ -73,7 +73,7 @@ func (c *AddArticle) Add(clientConfig entity.ClientConfig) {
 	// set created_at timestamp
 	date := time.Now().Format(time.RFC3339)
 
-	post := entity.PostSummary{
+	post := entity.FrontMatterSummary{
 		Slug:      slug,
 		Title:     title,
 		Thumbnail: "",
@@ -93,12 +93,12 @@ func (c *AddArticle) Add(clientConfig entity.ClientConfig) {
 }
 
 // writePostFile creates a Markdown file with front matter in the specified article directory.
-func writePostFile(articleDir string, post entity.PostSummary) error {
+func writePostFile(articleDir string, post entity.FrontMatterSummary) error {
 	if err := os.MkdirAll(articleDir, 0755); err != nil {
 		return fmt.Errorf("failed to create article_dir: %w", err)
 	}
 
-	frontMatter := entity.PostSummary{
+	frontMatter := entity.FrontMatterSummary{
 		Title:       post.Title,
 		Description: post.Description,
 		Thumbnail:   post.Thumbnail,
