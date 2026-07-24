@@ -32,20 +32,39 @@ type BriteConfig struct {
 	R2         R2Config      `json:"r2"`
 }
 
-type PostSummary struct {
-	Slug        string   `json:"slug" yaml:"-"`
-	Title       string   `json:"title" yaml:"title"`
-	Description string   `json:"description" yaml:"description"`
-	Thumbnail   string   `json:"thumbnail" yaml:"thumbnail"`
-	Category    string   `json:"category" yaml:"category"`
-	Tags        []string `json:"tags" yaml:"tags"`
-	CreatedAt   string   `json:"created_at" yaml:"created_at"`
-	UpdatedAt   string   `json:"updated_at" yaml:"updated_at"`
+// FrontMatterSummary represents the front matter of a Markdown file.
+type FrontMatterSummary struct {
+	Slug        string   `yaml:"-"`
+	Title       string   `yaml:"title"`
+	Description string   `yaml:"description"`
+	Thumbnail   string   `yaml:"thumbnail"`
+	Category    string   `yaml:"category"`
+	Tags        []string `yaml:"tags"`
+	CreatedAt   string   `yaml:"created_at"`
+	UpdatedAt   string   `yaml:"updated_at"`
 }
 
-type Post struct {
-	Summary PostSummary `json:"summary" yaml:"summary"`
-	Content string      `json:"content" yaml:"-"`
+// PostSummary represents the summary of a post, including its metadata.
+type PostSummary struct {
+	Slug        string        `json:"slug"`
+	Title       string        `json:"title"`
+	Description string        `json:"description"`
+	Thumbnail   string        `json:"thumbnail"`
+	Category    BadgeConfig   `json:"category"`
+	Tags        []BadgeConfig `json:"tags"`
+	CreatedAt   string        `json:"created_at"`
+	UpdatedAt   string        `json:"updated_at"`
+}
+
+// Post represents a complete post, including its summary and content.
+type InputArticle struct {
+	Summary FrontMatterSummary `yaml:"summary"`
+	Content string             `yaml:"-"`
+}
+
+type PostArticle struct {
+	Summary PostSummary `json:"summary"`
+	Content string      `json:"content"`
 }
 
 type Badge struct {
@@ -55,9 +74,9 @@ type Badge struct {
 }
 
 type ResponseData struct {
-	All        []Post  `json:"all"`
-	ByCategory []Badge `json:"byCategory"`
-	ByTag      []Badge `json:"byTag"`
+	All        []PostArticle `json:"all"`
+	ByCategory []Badge       `json:"byCategory"`
+	ByTag      []Badge       `json:"byTag"`
 }
 
 type ImageCache struct {
