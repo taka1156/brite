@@ -41,14 +41,23 @@ func (c *AddArticle) Add(clientConfig entity.ClientConfig) {
 	}
 
 	// select category from config.Categories
-	category, err := promptSingleSelect(reader, "Category", config.Categories)
+	selectCategoryOptions := make([]string, len(config.Categories))
+	for i, category := range config.Categories {
+		selectCategoryOptions[i] = category.Name
+	}
+
+	category, err := promptSingleSelect(reader, "Category", selectCategoryOptions)
 	if err != nil {
 		fmt.Println("Error:", err)
 		return
 	}
 
 	// select tags from config.Tags
-	tags, err := promptMultiSelect(reader, "Tags", config.Tags)
+	selectTagOptions := make([]string, len(config.Tags))
+	for i, tag := range config.Tags {
+		selectTagOptions[i] = tag.Name
+	}
+	tags, err := promptMultiSelect(reader, "Tags", selectTagOptions)
 	if err != nil {
 		fmt.Println("Error:", err)
 		return
