@@ -33,7 +33,7 @@ func (c *ConvertArticle) Convert(clientConfig entity.ClientConfig, jsonNames ent
 
 	// Initialize the output data
 	data := &entity.ResponseData{
-		All:        []entity.Post{},
+		All:        []entity.PostArticle{},
 		ByCategory: []entity.Badge{},
 		ByTag:      []entity.Badge{},
 	}
@@ -152,7 +152,7 @@ func replaceImagePaths(content, baseUrl, imageDir string) string {
 }
 
 // walkMarkdownFiles scans all articles, reads their summary and content, and creates lists of articles by category/tag.
-func walkMarkdownFiles(contentDir string, data *entity.ResponseData, config entity.BriteConfig, categoryNames, tagNames []entity.BadgeConfig) (*entity.ResponseData, error) {
+func walkMarkdownFiles(contentDir string, data *entity.ResponseData, config entity.BriteConfig, categories, tags []entity.BadgeConfig) (*entity.ResponseData, error) {
 	contains := func(list []entity.BadgeConfig, item string) bool {
 		for _, x := range list {
 			if x.Name == item {
@@ -183,7 +183,7 @@ func walkMarkdownFiles(contentDir string, data *entity.ResponseData, config enti
 			}
 		}
 
-		var post entity.Post
+		var post entity.InputArticle
 		if err := yaml.Unmarshal(parts[1], &post.Summary); err != nil {
 			fmt.Printf("Warning: Failed to parse YAML (%s): %v\n", path, err)
 			return nil
@@ -195,31 +195,44 @@ func walkMarkdownFiles(contentDir string, data *entity.ResponseData, config enti
 		post.Content = strings.TrimSpace(string(parts[2]))
 		post.Content = replaceImagePaths(post.Content, config.R2.BaseUrl, config.ImageDir)
 
-		data.All = append(data.All, post)
+		postArticle := entity.PostArticle{
+			Summary: entity.PostSummary{
+				Slug:        post.Summary.Slug,
+				Title:       post.Summary.Title,
+				Description: post.Summary.Description,
+				Thumbnail:   post.Summary.Thumbnail,
+				Category:    findBadgeConfig(config.Categories, post.Summary.Category),
+				Tags:        convertToBadgeConfigs(post.Summary.Tags, config.Tags),
+				CreatedAt:   post.Summary.CreatedAt,
+				UpdatedAt:   post.Summary.UpdatedAt,
+			},
+			Content: post.Content,
+		}
+		data.All = append(data.All, postArticle)
 
 		// Categorize the post by its category
-		if post.Summary.Category != "" && contains(categoryNames, post.Summary.Category) {
+		if postArticle.Summary.Category.Name != "" && contains(categories, postArticle.Summary.Category.Name) {
 			for i, category := range config.Categories {
-				if category.Name == post.Summary.Category {
-					data.ByCategory[i].Posts = append(data.ByCategory[i].Posts, post.Summary)
+				if category.Name == postArticle.Summary.Category.Name {
+					data.ByCategory[i].Posts = append(data.ByCategory[i].Posts, postArticle.Summary)
 					break
 				}
 			}
-		} else if post.Summary.Category != "" {
-			fmt.Printf("Notice: Skipped unregistered category -> %s (%s)\n", post.Summary.Category, path)
+		} else if postArticle.Summary.Category.Name != "" {
+			fmt.Printf("Notice: Skipped unregistered category -> %s (%s)\n", postArticle.Summary.Category.Name, path)
 		}
 
 		// Tags posts by their tags
-		for _, tag := range post.Summary.Tags {
-			if tag != "" && contains(tagNames, tag) {
+		for _, tag := range postArticle.Summary.Tags {
+			if tag.Name != "" && contains(tags, tag.Name) {
 				for i, tagConfig := range config.Tags {
-					if tagConfig.Name == tag {
-						data.ByTag[i].Posts = append(data.ByTag[i].Posts, post.Summary)
+					if tagConfig.Name == tag.Name {
+						data.ByTag[i].Posts = append(data.ByTag[i].Posts, postArticle.Summary)
 						break
 					}
 				}
-			} else if tag != "" {
-				fmt.Printf("Notice: Skipped unregistered tag -> %s (%s)\n", tag, path)
+			} else if tag.Name != "" {
+				fmt.Printf("Notice: Skipped unregistered tag -> %s (%s)\n", tag.Name, path)
 			}
 		}
 
@@ -228,12 +241,34 @@ func walkMarkdownFiles(contentDir string, data *entity.ResponseData, config enti
 
 	if err != nil {
 		fmt.Printf("Error walking paths: %v\n", err)
-		return nil, &json.InvalidUnmarshalError{}
+		return nil, err
 	}
 
 	sortPostsByDateDesc(data.All)
 
 	return data, nil
+}
+
+// category or tag image retrieval
+func findBadgeConfig(badges []entity.BadgeConfig, name string) entity.BadgeConfig {
+	for _, badge := range badges {
+		if badge.Name == name {
+			return badge
+		}
+	}
+	return entity.BadgeConfig{Name: name}
+}
+
+func convertToBadgeConfigs(names []string, tags []entity.BadgeConfig) []entity.BadgeConfig {
+	badges := make([]entity.BadgeConfig, len(names))
+
+	for i, name := range names {
+		badges[i] = findBadgeConfig(tags, name)
+		if badges[i].Name == "" {
+			badges[i] = entity.BadgeConfig{Name: name}
+		}
+	}
+	return badges
 }
 
 func writeJSONFile(path string, v interface{}) error {
@@ -272,7 +307,7 @@ func sortSlugsByDateDesc(articles []entity.PostSummary, slugToCreatedAt map[stri
 
 // Sort by date in descending order (newest articles first).
 // Dates that cannot be parsed are treated as the oldest and moved to the end.
-func sortPostsByDateDesc(posts []entity.Post) {
+func sortPostsByDateDesc(posts []entity.PostArticle) {
 	sort.SliceStable(posts, func(i, j int) bool {
 		ti, errI := time.Parse(time.RFC3339, posts[i].Summary.CreatedAt)
 		tj, errJ := time.Parse(time.RFC3339, posts[j].Summary.CreatedAt)
