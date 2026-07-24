@@ -32,7 +32,21 @@
       "type": "array",
       "description": "A whitelist of allowed categories. Unregistered categories found in markdown will be skipped.",
       "items": {
-        "type": "string"
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The category name."
+          },
+          "image": {
+            "type": "string",
+            "description": "The image path representing this category."
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "additionalProperties": false
       },
       "uniqueItems": true
     },
@@ -40,7 +54,21 @@
       "type": "array",
       "description": "A whitelist of allowed tags. Unregistered tags found in markdown will be skipped.",
       "items": {
-        "type": "string"
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The tag name."
+          },
+          "image": {
+            "type": "string",
+            "description": "The image path representing this tag."
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "additionalProperties": false
       },
       "uniqueItems": true
     },
